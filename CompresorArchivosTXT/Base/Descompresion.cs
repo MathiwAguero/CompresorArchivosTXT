@@ -1,6 +1,7 @@
 ﻿namespace CompresorArchivosTXT.Base;
 
-public class Descompresion
+public interface  Descompresion
 {
-    
+    public  bool DescomprimirArchivo(string rutaEntrada, string rutaSalida, out string mensajeResult);
+
 }

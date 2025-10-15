@@ -1,6 +1,6 @@
 ﻿namespace CompresorArchivosTXT.Base;
 
-public class Compresion
+public interface Compresion
 {
-    
+    public bool ComprimirArchivo  (string rutaArchivo, string rutaArchivoComprimido, out string mensajeResult);
 }

@@ -5,13 +5,13 @@ using CompresorArchivosTXT.Base;
 
 namespace CompresorArchivosTXT.Logic;
 
-public class MotorHuffman
+public class MotorHuffman: Compresion ,Descompresion
 {
     private Frecuencias analizador;
     private Compresor compresor;
     private ArbolHuffman arbol;
     
-    public MotorHuffman()
+    public MotorHuffman() 
     {
         analizador = new Frecuencias();
         compresor = new Compresor();
