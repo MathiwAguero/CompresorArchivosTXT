@@ -53,6 +53,37 @@ public class MotorHuffman
          return false;
      }
     }
+    
+    public bool DescomprimirArchivo(string rutaEntrada,string rutaSalida,out string mensajeResult)
+    {
+        Stopwatch sw= Stopwatch.StartNew();
+        try
+        {
+            var (codigos, frecuencias, bitsComprimidos) = compresor.LeerArchivoComprimido(rutaEntrada);
+          
+            arbol.ReconstruirArbol(codigos);
+            
+            string textoRecuperado = arbol.Decodificador(bitsComprimidos);
+            
+            File.WriteAllText(rutaSalida, textoRecuperado, Encoding.UTF8);
+         
+            sw.Stop();
+            
+            long tamanioComprimido = new FileInfo(rutaEntrada).Length;
+            long tamanioRecuperado = new FileInfo(rutaSalida).Length;
+            
+            MostrarEstadisticasDescompresion(tamanioComprimido, tamanioRecuperado, sw.ElapsedMilliseconds, rutaSalida);
+            mensajeResult = $"✅ Archivo descomprimido exitosamente a '{rutaSalida}'";
+            return true;
+        }
+        catch (Exception e)
+        {
+            mensajeResult=$"❌ Error al descomprimir: {e.Message}";
+            return false;
+        }
+    }
+    
+    
     private string FormatearTamaño(long bytes)
     {
         string[] sufijos = { "B", "KB", "MB", "GB" };
@@ -66,6 +97,15 @@ public class MotorHuffman
         }
 
         return $"{tamaño:F2} {sufijos[indice]}";
+    }
+    
+    public void MostrarEstadisticasDescompresion(long comprimido, long recuperado, long tiempo,string rutaSalida)
+    {
+        Console.WriteLine("\n📊 Estadísticas de Descompresión:");
+        Console.WriteLine($"   Tamaño Comprimido: {FormatearTamaño(comprimido),30}");
+        Console.WriteLine($"   Tamaño Recuperado:  {FormatearTamaño(recuperado),30}");
+        Console.WriteLine($"   Tiempo de Descompresión: {tiempo,24} ms");
+        Console.WriteLine($"   Archivo Guardado en: {Path.GetFileName(rutaSalida),-30}");
     }
     
     public void MostrarTablaSimbolos(Dictionary<char, int> frecuencias, Dictionary<char, string> codigos, int totalCaracteres)

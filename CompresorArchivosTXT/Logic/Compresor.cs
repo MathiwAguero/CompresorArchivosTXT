@@ -19,10 +19,10 @@ public class Compresor
                 writer.Write(par.Value.ToCharArray());
             }
            byte[] bytesComprimidos= ConvertirBitsABytes(bitsComprimidos);
-              writer.Write(bytesComprimidos.Length);
+              writer.Write(bytesComprimidos);
         }
     }
-    public (Dictionary<char, string>, Dictionary<char, int>) LeerArchivoComprimido(string rutaEntrada)
+    public (Dictionary<char, string>, Dictionary<char, int>, string) LeerArchivoComprimido(string rutaEntrada)
     {
         using (FileStream fs = new FileStream(rutaEntrada, FileMode.Open))
         using (BinaryReader reader = new BinaryReader(fs))
@@ -42,16 +42,17 @@ public class Compresor
                 frecuencias[simbolo] = frecuencia;
             }
             byte[] bytesComprimidos = reader.ReadBytes((int)(fs.Length - fs.Position));
-            string bitsComprimidos = ConvertirBitsABites(bytesComprimidos, numBitsComprimidos);
-            return (codigos, frecuencias);
+            string bitsComprimidos = ConvertirBYtsABites(bytesComprimidos, numBitsComprimidos);
+            return (codigos, frecuencias, bitsComprimidos);
         }
     }
 
     private byte[] ConvertirBitsABytes(string bitsComprimidos)
     {
         int numBytes = (bitsComprimidos.Length + 7) / 8;
-        byte[] bytesComprimidos = new byte[bitsComprimidos.Length/8];
-        for (int i = 0; i < bitsComprimidos.Length; i += 8)
+        byte[] bytesComprimidos = new byte[numBytes];
+    
+        for (int i = 0; i < bitsComprimidos.Length; i++)
         {
             if (bitsComprimidos[i] == '1')
             {
@@ -62,7 +63,7 @@ public class Compresor
         }
         return bytesComprimidos;
     }
-    private string ConvertirBitsABites(byte[] bytesComprimidos, int numBitsComprimidos)
+    private string ConvertirBYtsABites(byte[] bytesComprimidos, int numBitsComprimidos)
     {
         StringBuilder bitsComprimidos = new StringBuilder();
         foreach (byte b in bytesComprimidos)
@@ -72,6 +73,6 @@ public class Compresor
                 bitsComprimidos.Append((b & (1 << i)) != 0 ? '1' : '0');
             }
         }
-        return bitsComprimidos.ToString();
+        return bitsComprimidos.ToString().Substring(0, Math.Min(numBitsComprimidos, bitsComprimidos.Length));
     }
 }

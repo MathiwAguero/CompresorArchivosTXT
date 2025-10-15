@@ -1,9 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
-
 using System;
+using System.IO;
 using System.Text;
 using System.Linq;
-// Ajusta estos using según tus namespaces
 using CompresorArchivosTXT.Logic;
 using CompresorArchivosTXT.Base;
 
@@ -32,6 +31,11 @@ namespace CompresorArchivosTXT
             // Prueba 3: Texto variado
             PruebaTextoVariado();
 
+            Console.WriteLine("\n" + new string('═', 50) + "\n");
+
+            // Prueba 4: CICLO COMPLETO (Comprimir y Descomprimir archivo real)
+            PruebaCicloCompleto();
+
             Console.WriteLine("\n\n✓ TODAS LAS PRUEBAS COMPLETADAS");
             Console.WriteLine("Presiona cualquier tecla para salir...");
             Console.ReadKey();
@@ -56,6 +60,84 @@ namespace CompresorArchivosTXT
             Console.WriteLine("🔷 PRUEBA 3: Texto variado");
             string texto = "Este es un texto de prueba para el algoritmo de Huffman!";
             ProbarCompresion(texto);
+        }
+
+        static void PruebaCicloCompleto()
+        {
+            Console.WriteLine("🔷 PRUEBA 4: CICLO COMPLETO - Comprimir y Descomprimir Archivo Real");
+            
+            try
+            {
+                // Crear archivo de prueba
+                string textoOriginal = "Este es un texto de prueba para verificar el ciclo completo de compresión y descompresión usando el algoritmo de Huffman. ¡Debe funcionar perfectamente!";
+                string archivoOriginal = "prueba_original.txt";
+                string archivoComprimido = "prueba_comprimido.huff";
+                string archivoDescomprimido = "prueba_descomprimido.txt";
+
+                // Crear archivo original
+                File.WriteAllText(archivoOriginal, textoOriginal, Encoding.UTF8);
+                Console.WriteLine($"📄 Archivo original creado: '{archivoOriginal}'");
+                Console.WriteLine($"   Contenido: \"{textoOriginal.Substring(0, Math.Min(50, textoOriginal.Length))}...\"");
+                Console.WriteLine($"   Tamaño: {new FileInfo(archivoOriginal).Length} bytes\n");
+
+                // Comprimir
+                MotorHuffman motor = new MotorHuffman();
+                Console.WriteLine("🗜️  COMPRIMIENDO...");
+                bool exitoCompresion = motor.ComprimirArchivo(archivoOriginal, archivoComprimido, out string mensajeCompresion);
+                Console.WriteLine(mensajeCompresion);
+
+                if (!exitoCompresion)
+                {
+                    Console.WriteLine("❌ La compresión falló");
+                    return;
+                }
+
+                Console.WriteLine("\n" + new string('-', 50) + "\n");
+
+                // Descomprimir
+                Console.WriteLine("📂 DESCOMPRIMIENDO...");
+                bool exitoDescompresion = motor.DescomprimirArchivo(archivoComprimido, archivoDescomprimido, out string mensajeDescompresion);
+                Console.WriteLine(mensajeDescompresion);
+
+                if (!exitoDescompresion)
+                {
+                    Console.WriteLine("❌ La descompresión falló");
+                    return;
+                }
+
+                // Verificar que los archivos son idénticos
+                string textoRecuperado = File.ReadAllText(archivoDescomprimido, Encoding.UTF8);
+                bool sonIguales = textoOriginal == textoRecuperado;
+
+                Console.WriteLine("\n🔍 VERIFICACIÓN:");
+                Console.WriteLine($"   Texto original:    {textoOriginal.Length} caracteres");
+                Console.WriteLine($"   Texto recuperado:  {textoRecuperado.Length} caracteres");
+                
+                if (sonIguales)
+                {
+                    Console.WriteLine("\n   ✅ ¡ÉXITO TOTAL! Los archivos son idénticos");
+                    Console.WriteLine("   ✅ El ciclo de compresión-descompresión funciona correctamente");
+                }
+                else
+                {
+                    Console.WriteLine("\n   ❌ ERROR: Los archivos NO son idénticos");
+                    Console.WriteLine($"\n   Original:   \"{textoOriginal.Substring(0, Math.Min(50, textoOriginal.Length))}...\"");
+                    Console.WriteLine($"   Recuperado: \"{textoRecuperado.Substring(0, Math.Min(50, textoRecuperado.Length))}...\"");
+                }
+
+                // Limpiar archivos de prueba (opcional)
+                Console.WriteLine("\n🗑️  Limpiando archivos de prueba...");
+                if (File.Exists(archivoOriginal)) File.Delete(archivoOriginal);
+                if (File.Exists(archivoComprimido)) File.Delete(archivoComprimido);
+                if (File.Exists(archivoDescomprimido)) File.Delete(archivoDescomprimido);
+                Console.WriteLine("   Archivos temporales eliminados");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n❌ ERROR EN CICLO COMPLETO: {ex.Message}");
+                Console.WriteLine($"   Tipo: {ex.GetType().Name}");
+                Console.WriteLine($"   StackTrace: {ex.StackTrace}");
+            }
         }
 
         static void ProbarCompresion(string textoOriginal)
