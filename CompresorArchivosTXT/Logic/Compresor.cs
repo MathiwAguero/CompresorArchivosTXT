@@ -9,14 +9,16 @@ public class Compresor
         using (FileStream fs = new FileStream(rutaSalida, FileMode.Create))
         using (BinaryWriter writer = new BinaryWriter(fs))
         {
-            writer.Write(codigos.Count);
+
+        writer.Write(codigos.Count);
             writer.Write(bitsComprimidos.Length);
             foreach (var par in codigos)
             {
                 writer.Write(par.Key);
                 writer.Write(frecuencias[par.Key]);
+                byte[] codigoBytes = ConvertirBitsABytes(par.Value);
                 writer.Write((byte)par.Value.Length);
-                writer.Write(par.Value.ToCharArray());
+                writer.Write(codigoBytes);
             }
            byte[] bytesComprimidos= ConvertirBitsABytes(bitsComprimidos);
               writer.Write(bytesComprimidos);
@@ -36,8 +38,9 @@ public class Compresor
                 char simbolo = reader.ReadChar();
                 int frecuencia = reader.ReadInt32();
                 byte longitudCodigo = reader.ReadByte();
-                char[] codigoChars = reader.ReadChars(longitudCodigo);
-                string codigo = new string(codigoChars);
+               int numBytesCodigo = (longitudCodigo + 7) / 8;
+                byte[] codigoBytes = reader.ReadBytes(numBytesCodigo);
+                string codigo = ConvertirBYtsABites(codigoBytes, longitudCodigo);
                 codigos[simbolo] = codigo;
                 frecuencias[simbolo] = frecuencia;
             }
