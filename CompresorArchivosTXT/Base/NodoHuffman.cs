@@ -1,5 +1,7 @@
 ﻿namespace CompresorArchivosTXT.Base;
 
+//Segun copilot y algunas fuentes, es buena practica implementar IComparable en las clases de nodos para facilitar la comparacion y ordenamiento de los nodos
+//aqui manejamos como seran los nodos del arbol de huffman, manejando el caracter, su frecuencia y los nodos izquierdo y derecho
 public class NodoHuffman : IComparable<NodoHuffman>
 {
     

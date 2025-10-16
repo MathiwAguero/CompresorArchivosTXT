@@ -7,16 +7,22 @@ namespace CompresorArchivosTXT.Logic;
 using CompresorArchivosTXT.Base;
 
 
+//Aqui trabajamos con la estructura del arbol de huffman
+//Implementamos los metodos necesarios para construir el arbol, generar los codigos, reconstruir el arbol y decodificar
+
+
 public class ArbolHuffman
 {
     private NodoHuffman raiz;
+    //Usamos un diccionario para almacenar los codigos de cada caracter, ya que asi es mas facil acceder a ellos ademas de que es mas eficiente en tiempo
+    //y espacio que otras estructuras de datos como listas o arrays
     private Dictionary<char, string> codigos;
 
     public ArbolHuffman()
     {
         codigos = new Dictionary<char, string>();
     }
-
+    
     public void construccionArbol(Dictionary<char, int> freciencias)
     {
         if (freciencias.Count == 0 || freciencias == null)
@@ -57,7 +63,8 @@ public class ArbolHuffman
         return new Dictionary<char,string>(codigos);
         
     }
-    
+    // Codigo recursivo para generar los codigos de cada caracter, cuando es izq es 0 y cuando es der es 1
+    //Estructura obligatoria para el algoritmo de huffman   
     private void GenerarCodigosRecursivo(NodoHuffman nodo, string codigoActual)
     {
         if(nodo==null)

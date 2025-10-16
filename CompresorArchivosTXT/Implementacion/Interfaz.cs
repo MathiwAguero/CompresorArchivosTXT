@@ -55,7 +55,7 @@ public class Interfaz
 
         string directorio = Path.GetDirectoryName(rutaEntrada);
         string nombreExtension = Path.GetFileNameWithoutExtension(rutaEntrada);
-        string rutaSalida = Path.Combine(directorio, nombreExtension + ".huff");
+        string rutaSalida = Path.Combine(directorio, nombreExtension + ".mtw");
         if (motor.ComprimirArchivo(rutaEntrada, rutaSalida, out string mensajeResult))
         {
             Console.WriteLine(mensajeResult);
