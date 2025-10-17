@@ -9,13 +9,11 @@ public class Compresor
         using (FileStream fs = new FileStream(rutaSalida, FileMode.Create))
         using (BinaryWriter writer = new BinaryWriter(fs))
         {
-
-        writer.Write(codigos.Count);
+            writer.Write(codigos.Count);
             writer.Write(bitsComprimidos.Length);
             foreach (var par in codigos)
             {
                 writer.Write(par.Key);
-                writer.Write(frecuencias[par.Key]);
                 byte[] codigoBytes = ConvertirBitsABytes(par.Value);
                 writer.Write((byte)par.Value.Length);
                 writer.Write(codigoBytes);
@@ -24,7 +22,7 @@ public class Compresor
               writer.Write(bytesComprimidos);
         }
     }
-    public (Dictionary<char, string>, Dictionary<char, int>, string) LeerArchivoComprimido(string rutaEntrada)
+    public (Dictionary<char, string>,  string) LeerArchivoComprimido(string rutaEntrada)
     {
         using (FileStream fs = new FileStream(rutaEntrada, FileMode.Open))
         using (BinaryReader reader = new BinaryReader(fs))
@@ -32,21 +30,19 @@ public class Compresor
             int numSimbolos = reader.ReadInt32();
             int numBitsComprimidos = reader.ReadInt32();
             Dictionary<char, string> codigos = new Dictionary<char, string>();
-            Dictionary<char, int> frecuencias = new Dictionary<char, int>();
             for (int i = 0; i < numSimbolos; i++)
             {
                 char simbolo = reader.ReadChar();
-                int frecuencia = reader.ReadInt32();
                 byte longitudCodigo = reader.ReadByte();
-               int numBytesCodigo = (longitudCodigo + 7) / 8;
+                int numBytesCodigo = (longitudCodigo + 7) / 8;
                 byte[] codigoBytes = reader.ReadBytes(numBytesCodigo);
                 string codigo = ConvertirBYtsABites(codigoBytes, longitudCodigo);
                 codigos[simbolo] = codigo;
-                frecuencias[simbolo] = frecuencia;
+               
             }
             byte[] bytesComprimidos = reader.ReadBytes((int)(fs.Length - fs.Position));
             string bitsComprimidos = ConvertirBYtsABites(bytesComprimidos, numBitsComprimidos);
-            return (codigos, frecuencias, bitsComprimidos);
+            return (codigos,  bitsComprimidos);
         }
     }
 

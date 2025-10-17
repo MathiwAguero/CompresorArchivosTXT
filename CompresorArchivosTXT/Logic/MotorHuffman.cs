@@ -59,7 +59,7 @@ public class MotorHuffman: Compresion ,Descompresion
         Stopwatch sw= Stopwatch.StartNew();
         try
         {
-            var (codigos, frecuencias, bitsComprimidos) = compresor.LeerArchivoComprimido(rutaEntrada);
+            var (codigos, bitsComprimidos) = compresor.LeerArchivoComprimido(rutaEntrada);
           
             arbol.ReconstruirArbol(codigos);
             
